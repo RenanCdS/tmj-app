@@ -3,12 +3,12 @@ import LinearGradient from 'react-native-linear-gradient';
 import { View, Text, ImageBackground, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 
-const IntroPage = () => {
+const IntroPage = ({ navigation }) => {
 
     return (
         <View>
             <ImageBackground 
-                source={require('../images/intro-page/intro-image.jpg')}
+                source={require('../../images/intro-page/intro-image.jpg')}
                 resizeMode='cover'
                 style={styles.image}
             >
@@ -17,7 +17,7 @@ const IntroPage = () => {
                         <Text style={styles.maintitle}>TMJ</Text>
                     </View>
                     <View style={styles.container}>
-                        <Button style={styles.button} mode='outlined' onPress={() => console.log('Pressed')}>Registrar</Button>
+                        <Button style={styles.button} mode='outlined' onPress={() => navigation.navigate('RegisterPage')}>Registrar</Button>
                         <Button style={styles.button} mode='contained'>Entrar</Button>
                     </View>
                 </LinearGradient>
@@ -58,6 +58,6 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         opacity: 1
     }
-})
+});
 
 export default IntroPage;
