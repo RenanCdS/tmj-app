@@ -1,9 +1,55 @@
-import React from 'react';
+import React, { useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import { View, Text, ImageBackground, StyleSheet, KeyboardAvoidingView, ScrollView } from 'react-native';
-import { TextInput, RadioButton, Button } from 'react-native-paper';
+import { View, Text, ImageBackground, StyleSheet, KeyboardAvoidingView, ScrollView, Alert  } from 'react-native';
+import { TextInput, RadioButton, Button, HelperText } from 'react-native-paper';
+import { TextInputMask } from 'react-native-masked-text';
+import { postPreRegister } from '../services/auth.service';
 
 const RegisterPage = () => {
+
+    const [preRegister, setPreRegister] = useState({
+        name: '',
+        cpf: '',
+        phone: '',
+        role: '',
+        email: '',
+        password: '',
+        genre: '',
+        birthDate: ''
+    });
+
+     const [errors, setErrors] = useState({});
+
+
+    const isFormValid = () => {
+        let _errors = {};
+        if (!preRegister.name) _errors.name = 'esse campo é obrigatório';
+        if (!preRegister.email) _errors.email = 'esse campo é obrigatório';
+        if (!preRegister.phone) _errors.phone = 'esse campo é obrigatório';
+        if (!preRegister.role) _errors.role = 'esse campo é obrigatório';
+        if (!preRegister.genre) _errors.genre = 'esse campo é obrigatório';
+        if (!preRegister.cpf) _errors.cpf = 'esse campo é obrigatório';
+        if (!preRegister.birthDate) _errors.birthDate = 'esse campo é obrigatório';
+
+        setErrors(_errors);
+
+        return Object.keys(_errors).length === 0;
+    }
+
+    const submitForm = () => {
+    
+        if (!isFormValid()) return;
+
+        postPreRegister(preRegister).then(response => {
+            Alert.alert('Ok', 'Registro realizado com sucesso');
+            console.log(response);
+        }).catch(err => {
+            Alert.alert('Erro', 'Ocorreu um erro ao cadastra');
+            console.log(err);
+        });
+        
+        console.log(preRegister);
+    };
 
     return (
         <ScrollView>
@@ -29,51 +75,125 @@ const RegisterPage = () => {
                         <View style={styles.formcontainer}>
                             <TextInput
                                 style={{backgroundColor: 'transparent'}}
-                                mode="flat"                   
+                                mode="flat"        
                                 label="Nome"
+                                onChangeText={name => setPreRegister({
+                                    ...preRegister,
+                                    name
+                                })}
+                                value={preRegister.name}
+                                error={errors.name}
                             />
+                            <HelperText type="error" visible={errors.name}>
+                                {errors.name}
+                            </HelperText>
                             <TextInput
                                 style={{backgroundColor: 'transparent'}}
                                 mode="flat"                   
                                 label="E-mail"
+                                 onChangeText={email => setPreRegister({
+                                    ...preRegister,
+                                    email
+                                })}
+                                error={errors.email}
+                                value={preRegister.email}
                             />
-                            <TextInput
-                                style={{backgroundColor: 'transparent'}}
-                                mode="flat"                   
-                                label="Celular"
+                            <HelperText type="error" visible={errors.email}>
+                                {errors.email}
+                            </HelperText>
+                            <TextInputMask
+                                placeholder='Celular'
+                                underlineColorAndroid={errors.phone ? '#800000' : '#606060'}
+                                type={'cel-phone'}
+                                options={{
+                                    maskType: 'BRL',
+                                    withDDD: true,
+                                    dddMask: '(99) '
+                                }}
+                                value={preRegister.phone}
+                                onChangeText={phone => setPreRegister({
+                                    ...preRegister,
+                                    phone
+                                })}
+                                error={errors.phone}
                             />
+                            <HelperText type="error" visible={errors.phone}>
+                                {errors.phone}
+                            </HelperText>
                             <TextInput
                                 style={{backgroundColor: 'transparent'}}
                                 mode="flat"                   
                                 label="CPF"
+                                onChangeText={cpf => setPreRegister({
+                                    ...preRegister,
+                                    cpf
+                                })}
+                                error={errors.cpf}
+                                value={preRegister.cpf}
                             />
-                            <TextInput
-                                style={{backgroundColor: 'transparent'}}
-                                mode="flat"                   
-                                label="Data de nascimento"
+                            <HelperText type="error" visible={errors.cpf}>
+                                {errors.cpf}
+                            </HelperText>
+                            <TextInputMask
+                                placeholder='Data de nascimento'
+                                underlineColorAndroid={errors.birthDate ? '#800000' : '#606060'}
+                                type={'datetime'}
+                                options={{
+                                    format: 'DD/MM/YYYY'
+                                }}
+                                value={preRegister.birthDate}
+                                onChangeText={birthDate => setPreRegister({
+                                    ...preRegister,
+                                    birthDate
+                                })}
+                                error={errors.birthDate}
                             />
+                            <HelperText type="error" visible={errors.birthDate}>
+                                {errors.birthDate}
+                            </HelperText>
                             <TextInput
                                 style={{backgroundColor: 'transparent'}}
                                 mode="flat"                   
                                 label="Senha"
+                                onChangeText={password => setPreRegister({
+                                    ...preRegister,
+                                    password
+                                })}
+                                secureTextEntry={true}
+                                error={errors.password}
+                                value={preRegister.password}
                             />
+                            <HelperText type="error" visible={errors.password}>
+                                {errors.password}
+                            </HelperText>
 
                             <View style={styles.radiogroup}>
                                 <Text> Sexo </Text>
                                 <View style={styles.radiobuttoncontainer}>
                                     <RadioButton
                                         color='#3F51B5'
-                                        value="masculino"
-                                        status={ 'checked' }
+                                        value="M"
+                                        status={ preRegister.genre === 'M' ? 'checked' : 'unchecked' }
+                                        onPress={() => setPreRegister({
+                                            ...preRegister,
+                                            genre: 'M'
+                                        })}
                                     />
                                     <Text style={styles.radiotext}>Masculino</Text>
                                     <RadioButton
                                         color='#3F51B5'
-                                        value="feminino"
-                                        status={ 'checked' }
+                                        value="F"
+                                        status={ preRegister.genre === 'F' ? 'checked' : 'unchecked' }
+                                        onPress={() => setPreRegister({
+                                            ...preRegister,
+                                            genre: 'F'
+                                        })}
                                     />
                                     <Text style={styles.radiotext}>Feminino</Text>
                                 </View>
+                                <HelperText type="error" visible={errors.genre}>
+                                    {errors.genre}
+                                </HelperText>
                             </View>
 
                             <View style={styles.radiogroup}>
@@ -81,20 +201,31 @@ const RegisterPage = () => {
                                 <View style={styles.radiobuttoncontainer}>
                                     <RadioButton
                                         color='#3F51B5'
-                                        value="cliente"
-                                        status={ 'checked' }
+                                        value="0"
+                                        status={ preRegister.role === '0' ? 'checked' : 'unchecked' }
+                                        onPress={() => setPreRegister({
+                                            ...preRegister,
+                                            role: '0'
+                                        })}
                                     />
                                     <Text style={styles.radiotext}>Cliente</Text>
                                     <RadioButton
                                         color='#3F51B5'
-                                        value="feminino"
-                                        status={ 'checked' }
+                                        value="1"
+                                        status={ preRegister.role === '1' ? 'checked' : 'unchecked' }
+                                        onPress={() => setPreRegister({
+                                            ...preRegister,
+                                            role: '1'
+                                        })}
                                     />
                                     <Text style={styles.radiotext}>Profissional</Text>
                                 </View>
+                                <HelperText type="error" visible={errors.role}>
+                                    {errors.role}
+                                </HelperText>
                             </View>
 
-                            <Button style={styles.button} mode='contained'>CADASTRAR</Button>
+                            <Button onPress={() => submitForm()} style={styles.button} mode='contained'>CADASTRAR</Button>
                         </View>
                     </KeyboardAvoidingView>
                 </LinearGradient>
