@@ -6,6 +6,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import IntroPage from './src/pages/IntroPage';
 import RegisterPage from './src/pages/RegisterPage';
+import LoginPage from './src/pages/LoginPage';
+import ForgottenPasswordPage from './src/pages/ForgottenPasswordPage';
 
 const Stack = createStackNavigator();
 
@@ -30,6 +32,32 @@ const App: () => Node = () => {
         <Stack.Screen
               name='RegisterPage'
               component={RegisterPage}
+              options={{
+                headerTitleAlign: 'left',
+                headerShown: true,
+                headerTransparent: true,
+                headerTitleStyle: {
+                  fontSize: 200
+                },
+              }}
+        />
+
+        <Stack.Screen
+              name='LoginPage'
+              component={LoginPage}
+              options={{
+                headerTitleAlign: 'left',
+                headerShown: true,
+                headerTransparent: true,
+                headerTitleStyle: {
+                  fontSize: 200
+                },
+              }}
+        />
+
+        <Stack.Screen
+              name='ForgottenPasswordPage'
+              component={ForgottenPasswordPage}
               options={{
                 headerTitleAlign: 'left',
                 headerShown: true,

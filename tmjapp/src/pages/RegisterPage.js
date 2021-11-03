@@ -287,12 +287,6 @@ const RegisterPage = () => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        width: '100%',
-        display: 'flex',
-        marginTop: 30,
-        justifyContent: 'center'
-    },
     formcontainer: {
         width: '80%'
     },

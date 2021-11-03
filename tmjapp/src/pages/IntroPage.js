@@ -18,7 +18,7 @@ const IntroPage = ({ navigation }) => {
                     </View>
                     <View style={styles.container}>
                         <Button style={styles.button} mode='outlined' onPress={() => navigation.navigate('RegisterPage')}>Registrar</Button>
-                        <Button style={styles.button} mode='contained'>Entrar</Button>
+                        <Button style={styles.button} mode='contained' onPress={() => navigation.navigate('LoginPage')}>Entrar</Button>
                     </View>
                 </LinearGradient>
             </ImageBackground>
