@@ -4,6 +4,7 @@ import { View, Text, ImageBackground, StyleSheet, KeyboardAvoidingView, ScrollVi
 import { TextInput, RadioButton, Button, HelperText } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 import { postPreRegister } from '../services/auth.service';
+import Moment from 'moment';
 
 const RegisterPage = () => {
 
@@ -30,6 +31,7 @@ const RegisterPage = () => {
         if (!preRegister.genre) _errors.genre = 'esse campo é obrigatório';
         if (!preRegister.cpf) _errors.cpf = 'esse campo é obrigatório';
         if (!preRegister.birthDate) _errors.birthDate = 'esse campo é obrigatório';
+        if (!preRegister.password) _errors.password = 'esse campo é obrigatório';
 
         setErrors(_errors);
 
@@ -40,15 +42,34 @@ const RegisterPage = () => {
     
         if (!isFormValid()) return;
 
-        postPreRegister(preRegister).then(response => {
-            Alert.alert('Ok', 'Registro realizado com sucesso');
-            console.log(response);
+        const birthDate = Moment(preRegister.birthDate, 'DD/MM/YYYY').format('MM/DD/YYYY');
+        const preRegisterToSend = {
+            ...preRegister,
+            birthDate
+        };
+
+        postPreRegister(preRegisterToSend).then(response => {
+            Alert.alert('Tudo certo :)', 'Registro realizado com sucesso, por favor confirme seu e-mail.');
+            resetForm();
         }).catch(err => {
-            Alert.alert('Erro', 'Ocorreu um erro ao cadastra');
+            Alert.alert('Algo de errado aconteceu :(', err.response?.data?.errorMessage);
             console.log(err);
         });
         
         console.log(preRegister);
+    };
+
+    const resetForm = () => {
+        setPreRegister({
+                    birthDate: '',
+                    cpf: '',
+                    email: '',
+                    genre: '',
+                    name: '',
+                    password: '',
+                    phone: '',
+                    role: '' 
+                });
     };
 
     return (
@@ -101,21 +122,32 @@ const RegisterPage = () => {
                             <HelperText type="error" visible={errors.email}>
                                 {errors.email}
                             </HelperText>
-                            <TextInputMask
-                                placeholder='Celular'
-                                underlineColorAndroid={errors.phone ? '#800000' : '#606060'}
-                                type={'cel-phone'}
-                                options={{
-                                    maskType: 'BRL',
-                                    withDDD: true,
-                                    dddMask: '(99) '
-                                }}
-                                value={preRegister.phone}
-                                onChangeText={phone => setPreRegister({
-                                    ...preRegister,
-                                    phone
-                                })}
+                            <TextInput
+                                style={{backgroundColor: 'transparent'}}
+                                mode="flat"                   
+                                label="Celular"
                                 error={errors.phone}
+                                render={(props) => (
+                                    <TextInputMask
+                                        {...props}
+                                        type={'cel-phone'}
+                                        options={{
+                                            maskType: 'BRL',
+                                            withDDD: true,
+                                            dddMask: '(99) '
+                                        }}
+                                        value={preRegister.phone}
+                                        onChangeText={phone => {
+                                            setPreRegister({
+                                                ...preRegister,
+                                                phone
+                                            });
+                                            props.onChangeText?.(phone);
+                                        }}
+                                    />
+                                )
+
+                                }
                             />
                             <HelperText type="error" visible={errors.phone}>
                                 {errors.phone}
@@ -124,29 +156,49 @@ const RegisterPage = () => {
                                 style={{backgroundColor: 'transparent'}}
                                 mode="flat"                   
                                 label="CPF"
-                                onChangeText={cpf => setPreRegister({
-                                    ...preRegister,
-                                    cpf
-                                })}
                                 error={errors.cpf}
-                                value={preRegister.cpf}
+                                render={(props) => (
+                                    <TextInputMask
+                                        {...props}
+                                        type={'cpf'}
+                                        value={preRegister.cpf}
+                                        onChangeText={cpf => {
+                                            setPreRegister({
+                                                ...preRegister,
+                                                cpf
+                                            });
+                                            props.onChangeText?.(cpf);
+                                        }}
+                                    />
+                                )
+                                }
                             />
                             <HelperText type="error" visible={errors.cpf}>
                                 {errors.cpf}
                             </HelperText>
-                            <TextInputMask
-                                placeholder='Data de nascimento'
-                                underlineColorAndroid={errors.birthDate ? '#800000' : '#606060'}
-                                type={'datetime'}
-                                options={{
-                                    format: 'DD/MM/YYYY'
-                                }}
-                                value={preRegister.birthDate}
-                                onChangeText={birthDate => setPreRegister({
-                                    ...preRegister,
-                                    birthDate
-                                })}
+                             <TextInput
+                                style={{backgroundColor: 'transparent'}}
+                                mode="flat"                   
+                                label="Data de Nascimento"
                                 error={errors.birthDate}
+                                render={(props) => (
+                                    <TextInputMask
+                                        {...props}
+                                        type={'datetime'}
+                                        options={{
+                                            format: 'DD/MM/YYYY'
+                                        }}
+                                        value={preRegister.birthDate}
+                                        onChangeText={birthDate => {
+                                            setPreRegister({
+                                                ...preRegister,
+                                                birthDate
+                                            });
+                                            props.onChangeText?.(birthDate);
+                                        }}
+                                    />
+                                )
+                                }
                             />
                             <HelperText type="error" visible={errors.birthDate}>
                                 {errors.birthDate}

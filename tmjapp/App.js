@@ -16,7 +16,7 @@ const App: () => Node = () => {
    <NavigationContainer>
       <Stack.Navigator
             initialRouteName='IntroPage'
-            headerMode='screen'
+            screenOptions='screen'
       >
         <Stack.Screen
               name='IntroPage'
