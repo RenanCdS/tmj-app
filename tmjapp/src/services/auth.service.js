@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { REACT_APP_API_URL } from '../utils/config';
 
 export const postPreRegister = async (preRegisterDto) => {
     try {
-        return await axios.post('http://192.168.0.171:3000/api/v1/users', 
+        return await axios.post(`${REACT_APP_API_URL}/api/v1/users`, 
         {
             name: preRegisterDto.name,
             cpf: preRegisterDto.cpf,
