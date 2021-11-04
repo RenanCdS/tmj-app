@@ -1,9 +1,48 @@
 import React, { useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import { View, Text, ImageBackground, StyleSheet, KeyboardAvoidingView  } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
+import { View, Text, ImageBackground, StyleSheet, KeyboardAvoidingView, Alert  } from 'react-native';
+import { TextInput, Button, HelperText } from 'react-native-paper';
+import { postLogin } from '../services/auth.service';
 
 const LoginPage = ({ navigation }) => {
+
+    const [loginInfo, setLoginInfo] = useState({
+        email: '',
+        password: ''
+    });
+
+    const [errors, setErrors] = useState({});
+
+    const isFormValid = () => {
+        let _errors = {};
+        if (!loginInfo.email) _errors.email = 'esse campo é obrigatório';
+        if (!loginInfo.password) _errors.password = 'esse campo é obrigatório';
+
+        setErrors(_errors);
+
+        return Object.keys(_errors).length === 0;
+    };
+
+    const submitForm = () => {
+    
+        if (!isFormValid()) return;
+
+        postLogin(loginInfo).then(response => {
+            Alert.alert('Logado com sucesso', 'Usuário logado com sucesso!');
+            console.log(response);
+            resetForm();
+        }).catch(err => {
+            Alert.alert('Algo de errado aconteceu :(', err.response?.data?.errorMessage);
+            console.log(err);
+        });
+    };
+
+    const resetForm = () => {
+        setLoginInfo({
+            email: '',
+            password: ''
+        });
+    };
 
     return (
         <View>
@@ -31,15 +70,33 @@ const LoginPage = ({ navigation }) => {
                                 style={{backgroundColor: 'transparent'}}
                                 mode="flat"        
                                 label="E-mail"
+                                onChangeText={email => setLoginInfo({
+                                    ...loginInfo,
+                                    email
+                                })}
+                                value={loginInfo.email}
+                                error={errors.email}
                             />
+                            <HelperText type="error" visible={errors.email}>
+                                {errors.email}
+                            </HelperText>
                             <TextInput
                                 style={{backgroundColor: 'transparent'}}
                                 mode="flat"                   
                                 label="Senha"
                                 secureTextEntry={true}
+                                onChangeText={password => setLoginInfo({
+                                    ...loginInfo,
+                                    password
+                                })}
+                                value={loginInfo.password}
+                                error={errors.password}
                             />
+                            <HelperText type="error" visible={errors.password}>
+                                {errors.password}
+                            </HelperText>
                             <Text style={styles.link} onPress={() => navigation.navigate('ForgottenPasswordPage')}>Esqueceu a senha ?</Text>
-                            <Button style={styles.button} mode='contained'>ENTRAR</Button>
+                            <Button style={styles.button} mode='contained' onPress={() => submitForm()}>ENTRAR</Button>
                         </View>
                     </KeyboardAvoidingView>
                 </LinearGradient>

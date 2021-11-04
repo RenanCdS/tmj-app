@@ -1,9 +1,43 @@
 import React, { useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import { View, Text, ImageBackground, StyleSheet, KeyboardAvoidingView  } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
+import { View, Text, ImageBackground, StyleSheet, KeyboardAvoidingView, Alert  } from 'react-native';
+import { TextInput, Button, HelperText } from 'react-native-paper';
+import { postForgottenPassword } from '../services/auth.service';
 
-const ForgottenPasswordPage = () => {
+const ForgottenPasswordPage = ({ navigation }) => {
+
+    const [email, setEmail] = useState(
+        ''
+    );
+
+    const [errors, setErrors] = useState({});
+
+    const submitForm = () => {
+        if (!isFormValid()) return;
+
+        postForgottenPassword({ email }).then(response => {
+            Alert.alert('Tudo certo :)', 'Por favor, verifique seu e-mail. Foi enviado um link de reset de senha');
+            console.log(response);
+            resetForm();
+            navigation.navigate('LoginPage');
+        }).catch(err => {
+            Alert.alert('Algo de errado aconteceu :(', err.response?.data?.errorMessage);
+            console.log(err);
+        });
+    };
+
+    const isFormValid = () => {
+        let _errors = {};
+        if (!email) _errors.email = 'esse campo é obrigatório';
+
+        setErrors(_errors);
+
+        return Object.keys(_errors).length === 0;
+    };
+
+    const resetForm = () => {
+        setEmail('');
+    };
 
     return (
         <View>
@@ -31,8 +65,14 @@ const ForgottenPasswordPage = () => {
                                 style={{backgroundColor: 'transparent'}}
                                 mode="flat"        
                                 label="E-mail"
+                                onChangeText={email => setEmail(email)}
+                                value={email}
+                                error={errors.email}
                             />
-                            <Button style={styles.button} mode='contained'>ENVIAR</Button>
+                            <HelperText type="error" visible={errors.email}>
+                                {errors.email}
+                            </HelperText>
+                            <Button style={styles.button} mode='contained' onPress={() => submitForm()}>ENVIAR</Button>
                         </View>
                     </KeyboardAvoidingView>
                 </LinearGradient>
