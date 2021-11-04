@@ -8,6 +8,7 @@ import IntroPage from './src/pages/IntroPage';
 import RegisterPage from './src/pages/RegisterPage';
 import LoginPage from './src/pages/LoginPage';
 import ForgottenPasswordPage from './src/pages/ForgottenPasswordPage';
+import ServicesPage from './src/pages/ServicesPage';
 
 const Stack = createStackNavigator();
 
@@ -58,6 +59,19 @@ const App: () => Node = () => {
         <Stack.Screen
               name='ForgottenPasswordPage'
               component={ForgottenPasswordPage}
+              options={{
+                headerTitleAlign: 'left',
+                headerShown: true,
+                headerTransparent: true,
+                headerTitleStyle: {
+                  fontSize: 200
+                },
+              }}
+        />
+
+        <Stack.Screen
+              name='ServicesPage'
+              component={ServicesPage}
               options={{
                 headerTitleAlign: 'left',
                 headerShown: true,

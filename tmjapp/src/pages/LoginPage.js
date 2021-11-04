@@ -28,9 +28,8 @@ const LoginPage = ({ navigation }) => {
         if (!isFormValid()) return;
 
         postLogin(loginInfo).then(response => {
+            navigation.navigate('ServicesPage');
             Alert.alert('Logado com sucesso', 'Usuário logado com sucesso!');
-            console.log(response);
-            resetForm();
         }).catch(err => {
             Alert.alert('Algo de errado aconteceu :(', err.response?.data?.errorMessage);
             console.log(err);
